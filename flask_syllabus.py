@@ -19,7 +19,6 @@ from dateutil import tz  # For interpreting local times
 
 # Our own module
 import pre  # Preprocess schedule file
-pre.main()
 
 
 ###
@@ -61,12 +60,11 @@ def getWeek(weeks, today):
 def index():
     app.logger.debug("Main page entry")
 
-    #if 'schedule' not in flask.session:
-    #    app.logger.debug("Processing raw schedule file")
-    #    raw = open(CONFIG.schedule)
-    #    flask.session['schedule'] = pre.process(raw)
+    # Process schedule data
+    app.logger.debug("Processing raw schedule file")
+    pre.main()
 
-    # Determine which week to highlight
+    # Determine week to highlight
     currentWeek = getWeek(pre.schedule, datetime.now())
     for i in range(0, len(pre.schedule)):
         if int(pre.schedule[i]['week']) == currentWeek:
