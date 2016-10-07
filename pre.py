@@ -3,6 +3,8 @@ Test program for pre-processing schedule
 """
 import arrow
 
+# Globals
+schedule = None
 base = arrow.now()
 
 def process(raw):
@@ -15,6 +17,7 @@ def process(raw):
     field = None
     entry = { }
     cooked = [ ] 
+
     for line in raw:
         line = line.strip()
         if len(line) == 0 or line[0]=="#" :
@@ -32,8 +35,8 @@ def process(raw):
 
         if field == "begin":
             try:
+                global base
                 base = arrow.get(content, "MM/DD/YYYY")
-                # print("Base date {}".format(base.isoformat()))
             except:
                 raise ValueError("Unable to parse date {}".format(content))
 
@@ -44,7 +47,7 @@ def process(raw):
             entry['topic'] = ""
             entry['project'] = ""
             entry['week'] = content
-            entry['startdate'] = str(base.replace(weeks=+(int(content) -1).format('MM/DD/YYYY')))
+            entry['startdate'] = base.replace(weeks=+(int(content) - 1)).format('MM/DD/YYYY')
 
         elif field == 'topic' or field == 'project':
             entry[field] = content
@@ -60,8 +63,8 @@ def process(raw):
 
 def main():
     f = open("data/schedule.txt")
-    parsed = process(f)
-    print(parsed)
+    global schedule
+    schedule = process(f)
 
 if __name__ == "__main__":
     main()

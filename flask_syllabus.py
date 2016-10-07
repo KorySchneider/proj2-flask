@@ -19,6 +19,7 @@ from dateutil import tz  # For interpreting local times
 
 # Our own module
 import pre  # Preprocess schedule file
+pre.main()
 
 
 ###
@@ -38,10 +39,12 @@ import CONFIG
 def index():
     app.logger.debug("Main page entry")
 
-    if 'schedule' not in flask.session:
-        app.logger.debug("Processing raw schedule file")
-        raw = open(CONFIG.schedule)
-        flask.session['schedule'] = pre.process(raw)
+    #if 'schedule' not in flask.session:
+    #    app.logger.debug("Processing raw schedule file")
+    #    raw = open(CONFIG.schedule)
+    #    flask.session['schedule'] = pre.process(raw)
+
+    flask.session['schedule'] = pre.schedule
 
     return flask.render_template('syllabus.html')
 
