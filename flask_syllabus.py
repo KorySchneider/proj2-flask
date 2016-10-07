@@ -31,18 +31,12 @@ import CONFIG
 ###
 # Pages
 ###
-print(pre.base)
 
 @app.route("/")
 @app.route("/index")
 @app.route("/schedule")
 def index():
     app.logger.debug("Main page entry")
-
-    startdate = pre.base.format('MM/DD/YYYY')
-    flask.session['schedule'][0]['startdate'] = startdate
-    for i in range(1, len(flask.session['schedule'])):
-        flask.session['schedule'][i]['startdate'] = str(pre.base.replace(weeks=+i).format('MM/DD/YYYY'))
 
     if 'schedule' not in flask.session:
         app.logger.debug("Processing raw schedule file")
