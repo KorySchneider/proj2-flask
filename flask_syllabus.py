@@ -14,7 +14,7 @@ import logging
 
 # Date handling 
 import arrow # Replacement for datetime, based on moment.js
-import datetime # But we still need time
+from datetime import datetime # But we still need time
 from dateutil import tz  # For interpreting local times
 
 # Our own module
@@ -27,6 +27,28 @@ pre.main()
 ###
 app = flask.Flask(__name__)
 import CONFIG
+
+
+###
+# Helper functions
+###
+
+def getWeek(weeks, today):
+    """
+    Finds and returns the current week number based on today's date
+    """
+    for i in range(0, len(weeks)):
+        startdate = datetime.strptime(weeks[i]['startdate'], '%m/%d/%Y')
+        next_startdate = datetime.strptime(weeks[i+1]['startdate'], '%m/%d/%Y')
+
+        if today > startdate:
+            if today < next_startdate:
+                return int(weeks[i]['week'])
+            else:
+                getWeek(weeks[1:], today)
+        else:
+            app.logger.debug("Could not find date in term")
+            return
 
 
 ###
@@ -43,6 +65,14 @@ def index():
     #    app.logger.debug("Processing raw schedule file")
     #    raw = open(CONFIG.schedule)
     #    flask.session['schedule'] = pre.process(raw)
+
+    # Determine which week to highlight
+    currentWeek = getWeek(pre.schedule, datetime.now())
+    for i in range(0, len(pre.schedule)):
+        if int(pre.schedule[i]['week']) == currentWeek:
+            pre.schedule[i]['highlight'] = True
+        else:
+            pre.schedule[i]['highlight'] = False
 
     flask.session['schedule'] = pre.schedule
 
